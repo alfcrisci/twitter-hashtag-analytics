@@ -1,6 +1,6 @@
 # Methods of retrieving tweets
 
-require(twitteR)
+library(twitteR)
 
 GetTweetsBySearch <- function(term, n = 1500) {
   # Get tweets by searching Twitter API

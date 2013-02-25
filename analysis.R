@@ -5,21 +5,6 @@ source("get_tweets.R")
 source("munge_tweets.R")
 source("utilities.R")
 
-GetTweetCountTable <- function(df, col, threshold = 0) {
-  # Count tweets for each user, 
-  # sort the table in a decending order,
-  # and filter users who posted less than the threshold
-  
-  counts <- table(df[, col])
-  # create an ordered data frame
-  counts <- data.frame(user = unlist(dimnames(counts)),
-                       count = sort(counts, decreasing = TRUE), 
-                       row.names = NULL)
-  # create a subset of those who tweeted at least 5 times or more
-  counts <- subset(counts, counts$count > threshold)
-  return(counts)
-}
-
 # get tweets
 df <- GetTweetsBySearch('#LAK13')
 names(df)
@@ -46,23 +31,17 @@ counts1 <- merge(countsSortSubset, countRTSortSubset, by = "user", all.x=TRUE)
 counts <- merge(counts1, countToSortSubset, by = "user", all.x = TRUE)
 colnames(counts) <- c("user", "tweets", "to", "rt")
 counts[is.na(counts)] <- 0
+counts$tweets <- as.numeric(counts$tweets)
+counts$to <- as.numeric(counts$to)
+counts$rt <- as.numeric(counts$rt)
 
 # create a Cleveland dot plot of tweet counts and retweet counts per Twitter account
 # solid data point = number of tweets, letter R = number of retweets
-require(ggplot2)
-require(grid)
-ggplot() +  
-  geom_point(data = counts, mapping =  aes(reorder(user, tweets), tweets), shape = 19) + 
-  geom_point(data = counts, mapping =  aes(user, rt), shape = 17) +
-  xlab("User") + ylab("Number of messages") + 
-  coord_flip() + 
-  theme_bw() + 
-  theme(axis.title.x = element_text(vjust = -0.5, size = 14)) +
-  theme(axis.title.y = element_text(size = 14, angle=90)) + 
-  theme(plot.margin = unit(c(1,1,2,2), "lines"))
-
-
-
+library(ggplot2)
+library(reshape2)
+counts.melt <- melt(counts, id.vars = c("user"))
+ggplot(counts.melt, aes(x = user, y = value, color = variable)) + 
+  geom_point() + geom_line() + coord_flip() + ggtitle("Graph")
 
 
 

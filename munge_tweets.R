@@ -1,4 +1,4 @@
-
+library(stringr)
 
 RemoveOddChars <- function(df) {
   # Remove odd characters in tweets
@@ -21,6 +21,21 @@ ExtractUserInfo <- function(df) {
     TrimHead(str_extract(tweet,"^[RM]T (@[[:alnum:]_]*)")))
   
   return(df)
+}
+
+GetTweetCountTable <- function(df, col, threshold = 0) {
+  # Count tweets for each user, 
+  # sort the table in a decending order,
+  # and filter users who posted less than the threshold
+  
+  counts <- table(df[, col])
+  # create an ordered data frame
+  counts <- data.frame(user = unlist(dimnames(counts)),
+                       count = sort(counts, decreasing = TRUE), 
+                       row.names = NULL)
+  # create a subset of those who tweeted at least 5 times or more
+  counts <- subset(counts, counts$count > threshold)
+  return(counts)
 }
 
 AnonymizeUsers <- function(df) {
