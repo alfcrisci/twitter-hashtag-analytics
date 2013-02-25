@@ -1,4 +1,5 @@
-R code for obtaining and analysing tweets from the 2011 meeting of the American Anthropological Association
+Twitter Hashtag Analytics with R
+==========
 
 The code details ten steps in the analysis and visualisation of the tweets:
 
@@ -13,10 +14,10 @@ The code details ten steps in the analysis and visualisation of the tweets:
 9.  topic modelling the tweet corpus using latent Dirichlet allocation
 10. network analysis of tweeters based on retweets
 
+## Log: Feb 24
 
+Fork from https://github.com/benmarwick/AAA2011-Tweets by Ben Marwick
 
+Create separate files for different purposes.
 
-Author: Ben Marwick
-Contact: http://faculty.washington.edu/bmarwick/how-contact-me
-Licence: http://creativecommons.org/licenses/by-nc-sa/2.0/
-Date: Dec 2011
+Refactor original code for more general use.
