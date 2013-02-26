@@ -1,5 +1,10 @@
 # Methods of retrieving tweets
 
+# TODO:
+# 1) metadate structures of different sources are different
+#    need to make them adopt a same structure
+#    refer to https://dev.twitter.com/docs/platform-objects/tweets
+
 library(twitteR)
 
 GetTweetsBySearch <- function(term, n = 1500) {

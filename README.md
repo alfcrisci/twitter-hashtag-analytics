@@ -1,18 +1,19 @@
 Twitter Hashtag Analytics with R
 ==========
 
-The code details ten steps in the analysis and visualisation of the tweets:
+The code functionalities of this project include:
 
-1.  acquiring the raw Twitter data
-2.  calculating some basic statistics with the raw Twitter data
-3.  calculating  some basic retweet statistics
-4.  calculating the ratio of retweets to tweets
-5.  calculating some basic statistics about URLs in tweets
-6.  basic text mining for token frequency and token association analysis
-7.  calculating senitment scores of tweets, including on subsets containing tokens of interest
-8.  hierarchical clustering of tokens based on multiscale bootstrap resampling
-9.  topic modelling the tweet corpus using latent Dirichlet allocation
-10. network analysis of tweeters based on retweets
+1.  acquiring Twitter data from multiple source
+2.  basic statistics of tweets, retweets, and replies
+3.  basic statistics of URLs in tweets
+4.  basic text mining for token frequency and token association analysis
+5.  topic modelling the tweet corpus using latent Dirichlet allocation
+6.  analyze social networks based on retweeting or replying relationships
+7.  calculating senitment scores of tweets
+
+## Log: Feb 26
+
+The structure of the project looks okay now. I posted [a demo](http://bodongchen.com/blog/?p=290) of using this project to analyze #LAK13 tweets on my blog.
 
 ## Log: Feb 24
 

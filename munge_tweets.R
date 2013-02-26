@@ -1,9 +1,10 @@
 library(stringr)
 
+source('./utilities.R')
+
 RemoveOddChars <- function(df) {
   # Remove odd characters in tweets
   
-  source('utilities.R')
   df$text <- sapply(df$text, function(x) TrimOddChar(x))
   return(df)
 }
@@ -12,15 +13,61 @@ ExtractUserInfo <- function(df) {
   # For each tweet, extract information related to users
   # such as to_user, rt_user...
   
-  source('utilities.R')
   # extract to_user
-  df$to <- sapply(df$text, function(tweet) 
+  df$reply_to <- sapply(df$text, function(tweet) 
     TrimHead(str_extract(tweet,"^((\\.)?(@[[:alnum:]_]*))")))
   # extract rt_user
-  df$rt <- sapply(df$text, function(tweet) 
+  df$retweet_from <- sapply(df$text, function(tweet) 
     TrimHead(str_extract(tweet,"^[RM]T (@[[:alnum:]_]*)")))
   
   return(df)
+}
+
+ExtractUrls <- function(df) {
+  # For each tweet, extract url, remove it from the tweet,
+  # and put them separately in a new column
+  # TODO: cannot deal with multiple urls in one tweet right now
+  
+  require(stringr)
+  require(grid)
+  
+  # extracts links (quick and dirty)
+  # wish to have something like http://daringfireball.net/2009/11/liberal_regex_for_matching_urls
+  df$links <- sapply(df$text,function(tweet) str_extract(tweet,("http[^[:blank:]]+")))
+  df$text <- sapply(df$text, function(x) TrimUrls(x))
+  
+  return(df)
+}
+
+RenameMetadata <- function(df) {
+  # Rename metadata
+  
+  names.twitteR <- c("screenName", "created") # change from
+  names.api <- c("screen_name", "created_at") # change to
+  
+  # change names
+  for(name in names.twitteR) {
+    names(df)[which(names(df)==name)] <- names.api[which(names.twitteR==name)]
+  }
+  
+  df$from_user <- df$screen_name
+  
+  return(df)
+}
+
+PreprocessTweets <- function(df) {
+  # Perform a few preprocessing tasks
+  
+  # rename metadata
+  df.new <- RenameMetadata(df)
+  # removing odd characters
+  df.new <- RemoveOddChars(df.new)
+  # extract user info and add to df
+  df.new <- ExtractUserInfo(df.new)
+  # extract urls and add to df
+  df.new <- ExtractUrls(df.new)
+  
+  return(df.new)
 }
 
 GetTweetCountTable <- function(df, col, threshold = 0) {
@@ -31,11 +78,26 @@ GetTweetCountTable <- function(df, col, threshold = 0) {
   counts <- table(df[, col])
   # create an ordered data frame
   counts <- data.frame(user = unlist(dimnames(counts)),
-                       count = sort(counts, decreasing = TRUE), 
+                       count = as.numeric(sort(counts, decreasing = TRUE)), 
                        row.names = NULL)
   # create a subset of those who tweeted at least 5 times or more
   counts <- subset(counts, counts$count > threshold)
   return(counts)
+}
+
+GetURLCountTable <- function(df) {
+  # Extract URLs from tweets and count them
+  
+  require(stringr)
+  require(grid)
+  
+  # get frequencies of each link and put in rank order
+  countLinks <- data.frame(url = as.character(unlist(dimnames(sort(table(df$links))))), 
+                           count = sort(table(df$links)))
+  rownames(countLinks) <- NULL # remove rownames
+  countLinks$count <- as.integer(countLinks$count)
+  
+  return(countLinks)
 }
 
 AnonymizeUsers <- function(df) {

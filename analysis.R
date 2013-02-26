@@ -136,11 +136,13 @@ gplot(g.adj, usearrows = FALSE,
       vertex.col = "grey",vertex.border = "black",
       displaylabels = FALSE, edge.lwd = 0.01, edge.col  
       = "grey30", vertex.cex = 0.5) 
+
 # get some basic network attributes
 gden(g.adj) # density
 grecip(g.adj) # reciprocity
 gtrans(g.adj) # transitivity 
 centralization(g.adj, degree) 
+
 # calculate Univariate Conditional Uniform Graph Tests
 # density
 print(cug.gden   <- cug.test(g.adj, gden))
