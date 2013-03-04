@@ -11,6 +11,11 @@ The code functionalities of this project include:
 6.  analyze social networks based on retweeting or replying relationships
 7.  calculating senitment scores of tweets
 
+## Log: Mar 3
+
+Fix a bug of GetTweetCountTable.
+Start Demo2 that will focus on retrieving Google Spreadsheet data and exploring other interesting analysis.
+
 ## Log: Feb 26
 
 The structure of the project looks okay now. I posted [a demo](http://bodongchen.com/blog/?p=290) of using this project to analyze #LAK13 tweets on my blog.
