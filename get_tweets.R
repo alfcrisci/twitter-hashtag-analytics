@@ -5,19 +5,34 @@
 #    need to make them adopt a same structure
 #    refer to https://dev.twitter.com/docs/platform-objects/tweets
 
-library(twitteR)
 
 GetTweetsBySearch <- function(term, n = 1500) {
   # Get tweets by searching Twitter API
   # 
   # Args: 
   #   term: search term (e.g., #education)
+  #   n: max number of tweets
   #
   # Returns:
   #   Data frame containing tweets
   
+  EnsurePackage("twitteR")
+  EnsurePackage("RCurl")
+  EnsurePackage("bitops")
+  EnsurePackage("rjson")
+  
+  # get tweets, and put in a df
   results <- searchTwitter(term, n)
   df <- do.call("rbind", lapply(results, as.data.frame))
+  
+  # rename metadata
+  names.twitteR <- c("screenName", "created") # change from
+  names.api <- c("screen_name", "created_at") # change to
+  for(name in names.twitteR) {
+    names(df)[which(names(df)==name)] <- names.api[which(names.twitteR==name)]
+  }
+  df$from_user <- df$screen_name
+  
   return(df)
 }
 
@@ -52,6 +67,11 @@ GetTweetsFromGoogleDrive <- function(key, gid = 82) {
   conn <- textConnection(getURL(url))
   df <- read.csv(conn, stringsAsFactors = FALSE)
   close(conn)
+  
+  # formatting
+  df$created_at <- strptime(df$time, "%d/%m/%Y %H:%M:%S")
+  df$geo_coordinates[df$geo_coordinates == ""] <- NA
+  df$screen_name <- df$from_user
   
   return(df)
 }

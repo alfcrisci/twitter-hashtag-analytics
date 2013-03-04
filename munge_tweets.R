@@ -1,4 +1,4 @@
-library(stringr)
+EnsurePackage("stringr")
 
 source('./utilities.R')
 
@@ -28,8 +28,8 @@ ExtractUrls <- function(df) {
   # and put them separately in a new column
   # TODO: cannot deal with multiple urls in one tweet right now
   
-  require(stringr)
-  require(grid)
+  EnsurePackage("stringr")
+  EnsurePackage("grid")
   
   # extracts links (quick and dirty)
   # wish to have something like http://daringfireball.net/2009/11/liberal_regex_for_matching_urls
@@ -39,29 +39,11 @@ ExtractUrls <- function(df) {
   return(df)
 }
 
-RenameMetadata <- function(df) {
-  # Rename metadata
-  
-  names.twitteR <- c("screenName", "created") # change from
-  names.api <- c("screen_name", "created_at") # change to
-  
-  # change names
-  for(name in names.twitteR) {
-    names(df)[which(names(df)==name)] <- names.api[which(names.twitteR==name)]
-  }
-  
-  df$from_user <- df$screen_name
-  
-  return(df)
-}
-
 PreprocessTweets <- function(df) {
   # Perform a few preprocessing tasks
   
-  # rename metadata
-  df.new <- RenameMetadata(df)
   # removing odd characters
-  df.new <- RemoveOddChars(df.new)
+  df.new <- RemoveOddChars(df)
   # extract user info and add to df
   df.new <- ExtractUserInfo(df.new)
   # extract urls and add to df
@@ -78,8 +60,9 @@ GetTweetCountTable <- function(df, col, threshold = 0) {
   counts <- table(df[, col])
   # create an ordered data frame
   counts <- data.frame(user = unlist(dimnames(counts)),
-                       count = as.numeric(sort(counts, decreasing = TRUE)), 
+                       count = as.numeric(counts), 
                        row.names = NULL)
+  counts <- counts[with(counts, order(-count, user)), ]
   # create a subset of those who tweeted at least 5 times or more
   counts <- subset(counts, counts$count > threshold)
   return(counts)
@@ -88,8 +71,8 @@ GetTweetCountTable <- function(df, col, threshold = 0) {
 GetURLCountTable <- function(df) {
   # Extract URLs from tweets and count them
   
-  require(stringr)
-  require(grid)
+  EnsurePackage(stringr)
+  EnsurePackage(grid)
   
   # get frequencies of each link and put in rank order
   countLinks <- data.frame(url = as.character(unlist(dimnames(sort(table(df$links))))), 

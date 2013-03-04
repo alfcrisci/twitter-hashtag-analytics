@@ -1,0 +1,59 @@
+Demo 2 of twitter-hashtag-analytics: Analyzing tweets archived in Google Spreadsheet
+========================================================
+
+```{r preparation, message=FALSE, results='hide'}
+# check working directory
+getwd()
+
+# load source files
+source("get_tweets.R")
+source("munge_tweets.R")
+source("utilities.R")
+```
+
+```{r getbysearch, message=FALSE}
+# get tweets by search
+# this function is defined in get_tweets.R
+#df <- GetTweetsFromGoogleDrive('0Aup6zwZoYbZ1dHlSYWNib3BIWDNxSnVMN2FaQndCNmc') # #lak13
+df <- GetTweetsFromGoogleDrive('0Aup6zwZoYbZ1dGh0VzQ4MkkwVl8yQWVpRGZ4dVBCekE') # #edchat
+
+# preprocessing
+df <- PreprocessTweets(df)
+
+# structure of df
+str(df)
+
+# save or load data (so you can reuse data rather than search all the time)
+#save(df, file="./data/lak13_gdrive.Rda")
+save(df, file="./data/edchat_gdrive.Rda")
+# load("./data/df.Rda")
+```
+
+```{r counttables, message=FALSE}
+EnsurePackage("ggplot2")
+EnsurePackage("reshape2")
+
+# Count tables
+countTweets <- GetTweetCountTable(df, "from_user")
+
+# quickly check distribution of tweets per user
+qplot(countTweets$count, binwidth=1, xlab="Number of Tweets")
+
+# check who are those active users
+countTweets[countTweets$count > 20, ]
+```
+
+```{r scaledtime, message=FALSE}
+# show tweeting time by hour
+df$by_hour <- df$created_at$hour
+ggplot(df, aes(x=by_hour)) + 
+  geom_bar(aes(y = (..count..)))
+
+# by wday
+df$by_wday <- df$created_at$wday
+ggplot(df, aes(x=by_wday)) + 
+  geom_bar(aes(y = (..count..)))
+
+# hour vs wday
+ggplot(df, binwidth = 1, xlim=c(0,7)) + geom_jitter(aes(x=by_wday,y=by_hour))
+```

@@ -12,7 +12,7 @@ ConstructCorpus <- function(textVec,
   
   more.stopwords <- c("via", "rt", "mt", "amp")
   
-  require(tm)
+  EnsurePackage("tm")
   
   # create a object
   corpus <- Corpus(VectorSource(textVec))
@@ -34,8 +34,8 @@ ConstructCorpus <- function(textVec,
     removeWords(x, append(stopwords("english"), more.stopwords)))
   
   if(stemming) {
-    require(rJava)
-    require(Snowball)
+    EnsurePackage("rJava")
+    EnsurePackage("Snowball")
     corpus <- tm_map(corpus, stemDocument, language = "english")
   }
   
@@ -53,9 +53,9 @@ MakeWordCloud <- function(corpus) {
   # Returns:
   #   A word cloud created from the text vector
   
-  require(tm)
-  require(wordcloud)
-  require(RColorBrewer)
+  EnsurePackage("tm")
+  EnsurePackage("wordcloud")
+  EnsurePackage("RColorBrewer")
   
   corpus <- tm_map(corpus, function(x) {
     removeWords(x, c("via", "rt", "mt"))
@@ -83,8 +83,8 @@ TrainLDAModel <- function(td.mat) {
   # Returns:
   #   A LDA model with the optimal number of topics
   
-  require(topicmodels) # have to install libgsl0-dev before installing this package on Ubuntu
-  require(slam)
+  EnsurePackage("topicmodels") # have to install libgsl0-dev before installing this package on Ubuntu
+  EnsurePackage("slam")
   
   # create document term matrix and convert to data frame
   td.mat.sp <- removeSparseTerms(td.mat, sparse=0.99)
@@ -134,8 +134,8 @@ ScoreSentiment <- function(sentences, .progress='none') {
   # Score sentiment of sentences
   # Ref: http://jeffreybreen.wordpress.com/2011/07/04/twitter-text-mining-r-slides/
   
-  require(plyr)
-  require(stringr)
+  EnsurePackage("plyr")
+  EnsurePackage("stringr")
   
   #load sentiment lexicon
   pos.words = c(scan('./data/opinion-lexicon-English/positive-words.txt', what='character', comment.char=';'))
@@ -186,7 +186,7 @@ ScoreSentiment2 <- function(sentences){
   # install 'Rstem' and 'sentiment' from source
   # use command like: sudo R CMD INSTALL sentiment_0.2.tar.gz
   
-  require(sentiment)
+  EnsurePackage("sentiment")
   
   class_emo <- classify_emotion(sentences, algorithm="bayes", prior=1.0)
   # get emotion best fit
@@ -211,8 +211,8 @@ ScoreSentimentViralHeat <- function(text, key = "QKzubH1Qv6n9ZU4Jw") {
   # Score sentiment with ViralHeat
   # TODO: doesn't work for now; json returns empty
   
-  library(RCurl)
-  library(RJSONIO)
+  EnsurePackage("RCurl")
+  EnsurePackage("RJSONIO")
   
   text <- URLencode(text)
   

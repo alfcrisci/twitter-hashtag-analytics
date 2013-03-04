@@ -10,7 +10,7 @@ CreateSNADataFrame <- function(df, from, to, linkNames) {
   #
   # Note: I start with implementing 1-1 links
   
-  require(plyr)
+  EnsurePackage("plyr")
   
   df.sna <- data.frame(from = df[[from]], 
                        to = df[[to]], 
