@@ -62,9 +62,11 @@ GetTweetsFromGoogleDrive <- function(key, gid = 82) {
   # Returns:
   #   Data frame containing tweets
   
+  EnsurePackage("RCurl")
+  
   url <- paste(sep="", 'https://docs.google.com/spreadsheet/pub?key=', key, 
                '&single=true&gid=', gid, '&output=csv')
-  conn <- textConnection(getURL(url))
+  conn <- textConnection(getURL(url, ssl.verifypeer = FALSE))
   df <- read.csv(conn, stringsAsFactors = FALSE)
   close(conn)
   
